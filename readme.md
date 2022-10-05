@@ -14,9 +14,11 @@ This is a node js script to update your current ip address to Vultr DNS record. 
 ```.env
 VULTR_API_KEY="..."
 VULTR_DOMAIN="example.com"
-VULTR_SUBDOMAINS = ["dev1", "dev2", "dev3"]
-ISP_NAME = "AS134749 SPEED TECH ONLINE"
+VULTR_SUBDOMAINS=["dev1", "dev2", "dev3"]
+ISP_NAME="AS134749 SPEED TECH ONLINE"
 ```
+
+You can find your isp asn & name from ipinfo - https://ipinfo.io/ (**org** parameter)
 
 ### Automation On Windows
 
