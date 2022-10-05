@@ -20,14 +20,14 @@ ISP_NAME = "AS134749 SPEED TECH ONLINE"
 
 ### Automation On Windows
 
-Windows user can add the `run.bat` file on windows scheduled task. This will update your local ip to vultr Dns everytime you connect (disconnect/reconnect) to the internet.
+Windows user can add the `run.bat` file on windows scheduled task.
+This will update your local ip to vultr Dns everytime you connect (disconnect/reconnect) to the internet.
 
-Under **Triggers**, add new event.
-Select Settings `Basic`.
-Select Log: `Microsoft-Windows-NetwordProfile/Operational`
-Source: `NetworkProfile`
-Event ID: 10000
-
-Under **Actions**, click new.
-Start a program
-Browse & select the `run.bat` file.
+- Under **Triggers**, add new event.
+- Select Settings `Basic`.
+- Select Log: `Microsoft-Windows-NetwordProfile/Operational`
+- Source: `NetworkProfile`
+- Event ID: 10000
+- Under **Actions**, click new.
+- Start a program
+- Browse & select the `run.bat` file.
