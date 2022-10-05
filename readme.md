@@ -1,6 +1,6 @@
 # Vultr Dns Update
 
-This is a node js powerer script to update present isp ip address to Vultr DNS record. It's can provide Dynamic DNS service for your locally hosted (Wamp/Xamp) sites.
+This is a node js script to update your current ip address to Vultr DNS record. It can provide Dynamic DNS service for your locally hosted (Wamp/Xamp) sites.
 
 ### Usage
 
