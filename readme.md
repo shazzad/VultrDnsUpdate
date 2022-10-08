@@ -22,7 +22,7 @@ You can find your isp asn & name from ipinfo - https://ipinfo.io/ (**org** param
 
 ### Automation On Windows
 
-Windows user can add the `run.bat` file on windows scheduled task.
+Windows user can add the `updateDns.js` file on windows scheduled task.
 This will update your local ip to vultr Dns everytime you connect (disconnect/reconnect) to the internet.
 
 - Under **Triggers**, add new event.
@@ -32,4 +32,6 @@ This will update your local ip to vultr Dns everytime you connect (disconnect/re
 - Event ID: 10000
 - Under **Actions**, click new.
 - Start a program
-- Browse & select the `run.bat` file.
+- Browse & select the `"C:\Program Files\nodejs\node.exe"` file.
+- Add Arguments: `updateDns.js`
+- Start In: `{FOLDER_PATH_OF_THIS_CLONNED_REPO}`
