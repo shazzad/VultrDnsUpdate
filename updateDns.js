@@ -10,48 +10,59 @@ const httpOptions = {
   path: "/json",
 };
 
+if (process.env.IPINFO_TOKEN) {
+  httpOptions["path"] += `?token=${process.env.IPINFO_TOKEN}`;
+}
+
 const vultr = vultrNode.initialize({
   apiKey: process.env.VULTR_API_KEY,
   rateLimit: 600,
 });
 
-http
-  .get(httpOptions, function (res) {
-    var str = "";
-    res.on("data", function (chunk) {
-      str += chunk;
-    });
+const updateDns = () => {
+  http
+    .get(httpOptions, function (res) {
+      var str = "";
+      res.on("data", function (chunk) {
+        str += chunk;
+      });
 
-    res.on("end", function () {
-      const data = JSON.parse(str);
-      const { ip, org } = data;
+      res.on("end", function () {
+        const data = JSON.parse(str);
 
-      if (org !== process.env.ISP_NAME) {
-        // console.log(
-        //   `Ops, you are on a different internet provider: Current Isp: ${org}, Ip: ${ip}`
-        // );
-        notifier.notify({
-          title: "Local Server Dns",
-          message: `Ops, you are on a different internet provider. Current Isp: ${org}, Ip: ${ip}`,
-        });
-      } else {
-        console.log(`Updating local server dns records, Current Ip: ${ip}`);
-        // notifier.notify({
-        //   title: "Updating local server dns records",
-        //   message: `Current Ip: ${ip}`,
-        // });
+        const { ip, org } = data;
+        const asn = org.split(" ")[0].trim();
+        const asn_allowed = process.env.ALLOWED_ASN.split(",")
+          .map((a) => a.trim())
+          .includes(asn);
 
-        updateVultrRecords(ip);
-      }
+        if (!org || !asn_allowed) {
+          // console.log(
+          //   `Ops, you are on a different internet provider: Current Isp: ${org}, Ip: ${ip}`
+          // );
+          notifier.notify({
+            title: "Local Server Dns",
+            message: `Ops, you are on a different internet provider. Current Isp: ${org}, Ip: ${ip}`,
+          });
+        } else {
+          console.log(`Updating local server dns records, Current Ip: ${ip}`);
+          // notifier.notify({
+          //   title: "Updating local server dns records",
+          //   message: `Current Ip: ${ip}`,
+          // });
+
+          updateVultrRecords(ip);
+        }
+      });
+    })
+    .on("error", function (e) {
+      // console.log("Error getting ip address. Message: ", e.message);
+      notifier.notify({
+        title: "Local Server Dns",
+        message: `Error getting ip address - (${e.message})`,
+      });
     });
-  })
-  .on("error", function (e) {
-    // console.log("Error getting ip address. Message: ", e.message);
-    notifier.notify({
-      title: "Local Server Dns",
-      message: `Error getting ip address - (${e.message})`,
-    });
-  });
+};
 
 const updateVultrRecords = (ip) => {
   // Initialize the instance with your configuration
@@ -80,9 +91,13 @@ const updateVultrRecords = (ip) => {
 };
 
 const updateVultrRecord = (ip, record) => {
+  const allowed_subdomains = process.env.VULTR_SUBDOMAINS.split(",").map((el) =>
+    el.trim()
+  );
   if (
     record.type === "A" &&
-    process.env.VULTR_SUBDOMAINS.includes(record.name)
+    record.name !== "" &&
+    allowed_subdomains.includes(record.name)
   ) {
     if (record.data === ip) {
       // notifier.notify({
@@ -107,3 +122,5 @@ const updateVultrRecord = (ip, record) => {
     }
   }
 };
+
+updateDns();
